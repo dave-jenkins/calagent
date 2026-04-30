@@ -1,7 +1,10 @@
 functions-framework==3.7.0
 google-cloud-logging==3.9.0
+google-cloud-firestore==2.14.0
 google-cloud-calendar==0.12.0
 google-auth==2.27.0
 google-auth-oauthlib==1.2.0
 google-auth-httplib2==0.2.0
 google-api-python-client==2.104.0
+requests==2.31.0
+python-dateutil==2.8.2
