@@ -38,7 +38,7 @@ class CalendarManager:
     
     @staticmethod
     def _get_calendar_service():
-        """Build and return Google Calendar API service."""
+        """Build and return Google Calendar API service using google-api-python-client."""
         # For Cloud Functions, use Application Default Credentials
         # Ensure your Cloud Function service account has Calendar API permissions
         from google.auth import default
