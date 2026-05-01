@@ -2,6 +2,7 @@ import functions_framework
 import json
 import logging
 import os
+from google.cloud.firestore import Client as FirestoreClient
 from datetime import datetime, timedelta
 from typing import Dict, Tuple, Optional
 import requests
@@ -9,7 +10,6 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from dateutil import parser as dateutil_parser
 import pytz
-from google.cloud.firestore import Client as FirestoreClient
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
