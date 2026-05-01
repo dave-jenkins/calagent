@@ -549,7 +549,7 @@ def calendar_agent(request):
         text_lower = text.lower()
         
         # Help command
-        if 'help' in text_lower or 'cal help' in text_lower:
+        if ('help' in text_lower or 'cal help' in text_lower) and 'Calendar Bot Help' not in text and 'Type `help`' not in text:
             response_message = handler.handle_help()
         
         # Create event
