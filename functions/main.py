@@ -293,7 +293,6 @@ class UserAuthManager:
     def remove_approved_user(user_id: str) -> bool:
         """Remove user from approved list."""
         try:
-            print("removing user: "+ user_id)
             db.collection(APPROVED_USERS_COLLECTION).document(user_id).delete()
             return True
         except Exception as e:
@@ -528,10 +527,10 @@ def calendar_agent(request):
         
         if not request_json:
             return {"status": "error", "message": "No JSON provided"}, 400
+        print("MSG: " + request_json.toString())
         
         # Extract message details
         text = request_json.get("text", "").strip()
-        print("MSG: " + text)
         user_id = request_json.get("user_id", "")
         group_id = request_json.get("group_id", "")
         user_name = request_json.get("name", "User")
@@ -558,7 +557,7 @@ def calendar_agent(request):
             response_message = handler.handle_create_event(user_id, user_name, text)
         
         # List events
-        elif 'list events' in text_lower or 'show calendar' in text_lower or 'upcoming' in text_lower:
+        elif 'list events' in text_lower or 'show calendar' in text_lower:
             response_message = handler.handle_list_events()
         
         # Admin commands
