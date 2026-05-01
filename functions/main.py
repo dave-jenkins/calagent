@@ -539,7 +539,7 @@ def calendar_agent(request):
             return {"status": "ignored", "message": "Missing required fields"}, 200
         
         # Don't process bot's own messages
-        if user_id == GROUPME_BOT_ID:
+        if user_id == GROUPME_BOT_ID or sender_id == "903762":
             return {"status": "ignored"}, 200
         
         # Initialize handler
