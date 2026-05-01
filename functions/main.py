@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 # Environment variables
 GROUPME_BOT_ID = os.environ.get('GROUPME_BOT_ID')
+GROUPME_API_TOKEN = os.environ.get('GROUPME_API_TOKEN')
 GOOGLE_CALENDAR_ID = os.environ.get('GOOGLE_CALENDAR_ID', 'primary')
 PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
 ADMIN_USER_IDS = set(os.environ.get('ADMIN_USER_IDS', '').split(',')) if os.environ.get('ADMIN_USER_IDS') else set()
@@ -348,11 +349,16 @@ class GroupMeManager:
         if not GROUPME_BOT_ID:
             logger.warning("GROUPME_BOT_ID not configured")
             return False
-        
+
+        if not GROUPME_API_TOKEN:
+            logger.warning("GROUPME_API_TOKEN not configured")
+            return False
+            
         url = 'https://api.groupme.com/v3/bots/post'
         
         payload = {
             'bot_id': GROUPME_BOT_ID,
+            'token': GROUPME_API_TOKEN,
             'text': message
         }
         
