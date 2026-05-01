@@ -7,7 +7,7 @@ from typing import Dict, Tuple, Optional
 import requests
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from google.cloud import firestore_v1
+from google.cloud.firestore import Client as FirestoreClient
 from dateutil import parser as dateutil_parser
 import pytz
 
@@ -22,7 +22,7 @@ PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
 ADMIN_USER_IDS = set(os.environ.get('ADMIN_USER_IDS', '').split(',')) if os.environ.get('ADMIN_USER_IDS') else set()
 
 # Firestore client
-db = firestore_v1.FirestoreClient()
+db = FirestoreClient()
 
 # Global state for approved users
 APPROVED_USERS_COLLECTION = 'calendar_approved_users'
