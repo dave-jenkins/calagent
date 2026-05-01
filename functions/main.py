@@ -527,7 +527,7 @@ def calendar_agent(request):
         
         if not request_json:
             return {"status": "error", "message": "No JSON provided"}, 400
-        print("MSG: " + request_json.toString())
+        print("MSG: " + json.dumps(request_json))
         
         # Extract message details
         text = request_json.get("text", "").strip()
