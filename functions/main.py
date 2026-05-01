@@ -293,6 +293,7 @@ class UserAuthManager:
     def remove_approved_user(user_id: str) -> bool:
         """Remove user from approved list."""
         try:
+            print("removing user: "+ user_id)
             db.collection(APPROVED_USERS_COLLECTION).document(user_id).delete()
             return True
         except Exception as e:
