@@ -7,9 +7,9 @@ from typing import Dict, Tuple, Optional
 import requests
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from google.cloud.firestore import Client as FirestoreClient
 from dateutil import parser as dateutil_parser
 import pytz
+from google.cloud.firestore import Client as FirestoreClient
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
