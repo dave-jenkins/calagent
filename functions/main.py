@@ -534,6 +534,7 @@ def calendar_agent(request):
         user_id = request_json.get("user_id", "")
         group_id = request_json.get("group_id", "")
         user_name = request_json.get("name", "User")
+        sender_id = request_json.get("sender_id", "")
         
         if not text or not user_id or not group_id:
             return {"status": "ignored", "message": "Missing required fields"}, 200
