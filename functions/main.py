@@ -530,6 +530,7 @@ def calendar_agent(request):
         
         # Extract message details
         text = request_json.get("text", "").strip()
+        print("MSG: " + text)
         user_id = request_json.get("user_id", "")
         group_id = request_json.get("group_id", "")
         user_name = request_json.get("name", "User")
