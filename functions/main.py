@@ -577,7 +577,7 @@ def calendar_agent(request):
         elif 'list events' in text_lower or 'show calendar' in text_lower:
             if 'month' in text_lower:
                 response_message = handler.handle_list_events(30)
-            else
+            else:
                 response_message = handler.handle_list_events(7)
         
         # Admin commands
