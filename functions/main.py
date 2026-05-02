@@ -457,7 +457,7 @@ Type `help` for this message anytime!"""
             logger.error(f"Error in handle_create_event: {e}")
             return f"❌ Error creating event: {str(e)}"
     
-    def handle_list_events(self, nbrDays) -> str:
+    def handle_list_events(self, showid, nbrDays) -> str:
         """Handle list events request."""
         try:
             events = self.calendar_manager.list_upcoming_events(days=nbrDays)
@@ -485,8 +485,10 @@ Type `help` for this message anytime!"""
                         formatted_start = dt.strftime('%b %d')
                 else:
                     formatted_start = 'TBD'
-            
-                response += f"{i}. {title}: {id} - {formatted_start}\n"
+                if showid:
+                    response += f"{i}. {title}: {id} - {formatted_start}\n"
+                else:
+                    response += f"{i}. {title} - {formatted_start}\n"
             
             return response
         
@@ -598,10 +600,13 @@ def calendar_agent(request):
         
         # List events
         elif 'list events' in text_lower or 'show calendar' in text_lower:
+            showid = false
+            if 'id' in text_lower:
+                showid = true
             if 'month' in text_lower:
-                response_message = handler.handle_list_events(30)
+                response_message = handler.handle_list_events(showid, 30)
             else:
-                response_message = handler.handle_list_events(7)
+                response_message = handler.handle_list_events(showid, 7)
         
         # Admin commands
         elif 'admin add:' in text_lower:
