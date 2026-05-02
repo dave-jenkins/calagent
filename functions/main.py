@@ -379,17 +379,16 @@ class CommandHandler:
 **Basic Commands:**
 • `create event: Event Name on [date] at [time]` - Create an event
   Example: `create event: Team Meeting on Friday at 2pm`
-
-• `list events` or `show calendar` - Show upcoming events
-
+• `list events` or `show calendar` - Show upcoming 7 days of events
+• `list events month` or `show calendar month` - Show upcoming 30 days of events
 • `delete event: [event ID]` - Delete an event
-
 • `update event: [event ID] to [new title] on [new date/time]` - Update event
 
 **Admin Commands** (Admins Only):
 • `admin add: [user_id] [user_name]` - Approve user for calendar access
 • `admin remove: [user_id]` - Revoke calendar access
 • `admin list` - Show all approved users
+• `admin all users` - Show all users in groupme
 
 **Features:**
 ✅ Automatic conflict detection - prevents double-booking
@@ -524,6 +523,29 @@ Type `help` for this message anytime!"""
         
         return response
 
+    def handle_admin_allUsers(self) -> str:
+        response = "👥 **All Users:**\n"
+        """Send a message to the GroupMe group."""
+        if not GROUPME_BOT_ID:
+            logger.warning("GROUPME_BOT_ID not configured")
+            return False
+            
+        url = 'https://api.groupme.com/v3/groups/'+GROUPME_GROUP_ID
+        
+        payload = {
+            'bot_id': GROUPME_BOT_ID,
+            'text': message
+        }
+        
+        try:
+            response = requests.post(url, json=payload)
+            response.raise_for_status()
+            print(response.text)
+            return True
+        except Exception as e:
+            logger.error(f"Error getting GroupMe users: {e}")
+            return "Error getting GroupMe users"
+
 
 @functions_framework.http
 def calendar_agent(request):
@@ -598,7 +620,10 @@ def calendar_agent(request):
         
         elif 'admin list' in text_lower:
             response_message = handler.handle_admin_list()
-        
+
+        elif 'admin all users' in text_lower:
+            response_message = handler.handle_admin_allUsers()
+            
         # Only send response if we matched a command
         if response_message:
             GroupMeManager.send_message(response_message)
