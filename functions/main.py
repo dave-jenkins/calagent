@@ -466,9 +466,10 @@ Type `help` for this message anytime!"""
             
             response = "📅 **Upcoming Events:**\n"
             for i, event in enumerate(events[:10], 1):
-                print("EVENT: "+json.dumps(event))
+                #print("EVENT: "+json.dumps(event))
                 title = event.get('summary', 'Untitled')
                 start = event['start'].get('dateTime', event['start'].get('date', 'TBD'))
+                id = event.get('id',"")
                 # response += f"{i}. {title} - {start}\n"
                 # Format the datetime/date string
                 if start != 'TBD':
@@ -484,7 +485,7 @@ Type `help` for this message anytime!"""
                 else:
                     formatted_start = 'TBD'
             
-                response += f"{i}. {title} - {formatted_start}\n"
+                response += f"{i}. {title} ({id}) - {formatted_start}\n"
             
             return response
         
