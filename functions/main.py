@@ -486,7 +486,7 @@ Type `help` for this message anytime!"""
                 else:
                     formatted_start = 'TBD'
             
-                response += f"{i}. {title} ({id}) - {formatted_start}\n"
+                response += f"{i}. {title}: {id} - {formatted_start}\n"
             
             return response
         
