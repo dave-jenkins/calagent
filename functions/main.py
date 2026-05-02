@@ -598,11 +598,16 @@ def calendar_agent(request):
         elif 'create event' in text_lower:
             response_message = handler.handle_create_event(user_id, user_name, text)
         
+        # Delete event
+        elif 'delete event:' in text_lower:
+            event_id = text.replace("delete event: ", "", 1).strip()
+            response_message = handler.delete_event(event_id)
+            
         # List events
         elif 'list events' in text_lower or 'show calendar' in text_lower:
-            showid = false
+            showid = False
             if 'id' in text_lower:
-                showid = true
+                showid = True
             if 'month' in text_lower:
                 response_message = handler.handle_list_events(showid, 30)
             else:
