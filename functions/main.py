@@ -376,7 +376,7 @@ class CommandHandler:
         """Display help message for calendar commands."""
         help_text = """📅 **Calendar Bot Help**
 
-**Basic Commands:**
+**Calendar Commands:**
 • `create event: Event Name on [date] at [time]` - Create an event
   Example: `create event: Team Meeting on Friday at 2pm`
 • `list events` or `show calendar` - Show upcoming 7 days of events
