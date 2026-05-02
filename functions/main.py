@@ -457,19 +457,35 @@ Type `help` for this message anytime!"""
             logger.error(f"Error in handle_create_event: {e}")
             return f"❌ Error creating event: {str(e)}"
     
-    def handle_list_events(self) -> str:
+    def handle_list_events(self, nbrDays) -> str:
         """Handle list events request."""
         try:
-            events = self.calendar_manager.list_upcoming_events(days=7)
+            events = self.calendar_manager.list_upcoming_events(days=nbrDays)
             
             if not events:
-                return "📅 No upcoming events in the next 7 days!"
+                return "📅 No upcoming events in the next " +nbrDays+ " days!"
             
             response = "📅 **Upcoming Events:**\n"
             for i, event in enumerate(events[:10], 1):
+                print("EVENT: "+json.dumps(event))
                 title = event.get('summary', 'Untitled')
                 start = event['start'].get('dateTime', event['start'].get('date', 'TBD'))
-                response += f"{i}. {title} - {start}\n"
+                # response += f"{i}. {title} - {start}\n"
+                # Format the datetime/date string
+                if start != 'TBD':
+                    try:
+                        # Parse ISO format datetime or date
+                        dt = datetime.fromisoformat(start.replace('Z', '+00:00'))
+                        # Format as "MMM DD" and "HH:MM am/pm"
+                        formatted_start = dt.strftime('%b %d at %I:%M %p')
+                    except ValueError:
+                        # If it's a date-only string (YYYY-MM-DD)
+                        dt = datetime.strptime(start, '%Y-%m-%d')
+                        formatted_start = dt.strftime('%b %d')
+                else:
+                    formatted_start = 'TBD'
+            
+                response += f"{i}. {title} - {formatted_start}\n"
             
             return response
         
@@ -559,7 +575,10 @@ def calendar_agent(request):
         
         # List events
         elif 'list events' in text_lower or 'show calendar' in text_lower:
-            response_message = handler.handle_list_events()
+            if 'month' in text_lower:
+                response_message = handler.handle_list_events(30)
+            else
+                response_message = handler.handle_list_events(7)
         
         # Admin commands
         elif 'admin add:' in text_lower:
