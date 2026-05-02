@@ -548,7 +548,8 @@ Type `help` for this message anytime!"""
 
 
 @functions_framework.http
-def calendar_agent(request):
+def app(request):
+#def calendar_agent(request):
     """
     Main HTTP Cloud Function that receives GroupMe webhook messages.
     
