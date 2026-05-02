@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 # Environment variables
 GROUPME_BOT_ID = os.environ.get('GROUPME_BOT_ID')
+GROUPME_API_TOKEN = os.environ.get('GROUPME_API_TOKEN')
 GOOGLE_CALENDAR_ID = os.environ.get('GOOGLE_CALENDAR_ID', 'primary')
 PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
 ADMIN_USER_IDS = set(os.environ.get('ADMIN_USER_IDS', '').split(',')) if os.environ.get('ADMIN_USER_IDS') else set()
@@ -534,8 +535,7 @@ Type `help` for this message anytime!"""
         url = 'https://api.groupme.com/v3/groups/'+GROUPME_GROUP_ID
         
         payload = {
-            'bot_id': GROUPME_BOT_ID,
-            'text': message
+            'token': GROUPME_API_TOKEN
         }
         
         try:
