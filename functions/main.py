@@ -375,6 +375,7 @@ class CommandHandler:
     
     def handle_help(self) -> str:
         """Display help message for calendar commands."""
+        #• `update event: [event ID] to [new title] on [new date/time]` - Update event
         help_text = """📅 **Calendar Bot Help**
 
 **Calendar Commands:**
@@ -383,7 +384,6 @@ class CommandHandler:
 • `list events` or `show calendar` - Show upcoming 7 days of events
 • `list events month` or `show calendar month` - Show upcoming 30 days of events
 • `delete event: [event ID]` - Delete an event
-• `update event: [event ID] to [new title] on [new date/time]` - Update event
 
 **Admin Commands** (Admins Only):
 • `admin add: [user_id] [user_name]` - Approve user for calendar access
