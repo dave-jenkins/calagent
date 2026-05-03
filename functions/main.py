@@ -555,7 +555,7 @@ Type `help` for this message anytime!"""
             return "Error getting GroupMe users"
 
 
-@app.route("/")
+@app.route("/", methods=['POST'])
 def calendar_agent(request: Request):
     """
     Main HTTP Cloud Function that receives GroupMe webhook messages.
