@@ -10,7 +10,7 @@ from googleapiclient.discovery import build
 from dateutil import parser as dateutil_parser
 import pytz
 from flask import Flask
-from flask import Request
+from flask import request
 import requests
 
 app = Flask(__name__)
@@ -556,7 +556,7 @@ Type `help` for this message anytime!"""
 
 
 @app.route("/", methods=['POST'])
-def calendar_agent(request: Request):
+def calendar_agent():
     """
     Main HTTP Cloud Function that receives GroupMe webhook messages.
     
