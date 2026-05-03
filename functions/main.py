@@ -2,12 +2,13 @@ import functions_framework
 import json
 import logging
 import os
-from google.cloud.firestore import Client as FirestoreClient
 from datetime import datetime, timedelta
 from typing import Dict, Tuple, Optional
+from flask import Request
 import requests
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+from google.cloud import firestore
 from dateutil import parser as dateutil_parser
 import pytz
 
@@ -17,13 +18,12 @@ logger = logging.getLogger(__name__)
 
 # Environment variables
 GROUPME_BOT_ID = os.environ.get('GROUPME_BOT_ID')
-GROUPME_API_TOKEN = os.environ.get('GROUPME_API_TOKEN')
 GOOGLE_CALENDAR_ID = os.environ.get('GOOGLE_CALENDAR_ID', 'primary')
 PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
 ADMIN_USER_IDS = set(os.environ.get('ADMIN_USER_IDS', '').split(',')) if os.environ.get('ADMIN_USER_IDS') else set()
 
 # Firestore client
-db = FirestoreClient()
+db = firestore.client()
 
 # Global state for approved users
 APPROVED_USERS_COLLECTION = 'calendar_approved_users'
@@ -40,8 +40,8 @@ class CalendarManager:
     @staticmethod
     def _get_calendar_service():
         """Build and return Google Calendar API service using google-api-python-client."""
-        # For Cloud Functions, use Application Default Credentials
-        # Ensure your Cloud Function service account has Calendar API permissions
+        # For Cloud Run, use Application Default Credentials
+        # Ensure your Cloud Run service account has Calendar API permissions
         from google.auth import default
         credentials, _ = default(scopes=[
             'https://www.googleapis.com/auth/calendar'
@@ -349,7 +349,7 @@ class GroupMeManager:
         if not GROUPME_BOT_ID:
             logger.warning("GROUPME_BOT_ID not configured")
             return False
-            
+        
         url = 'https://api.groupme.com/v3/bots/post'
         
         payload = {
@@ -375,21 +375,22 @@ class CommandHandler:
     
     def handle_help(self) -> str:
         """Display help message for calendar commands."""
-        #• `update event: [event ID] to [new title] on [new date/time]` - Update event
         help_text = """📅 **Calendar Bot Help**
 
-**Calendar Commands:**
+**Basic Commands:**
 • `create event: Event Name on [date] at [time]` - Create an event
   Example: `create event: Team Meeting on Friday at 2pm`
-• `list events` or `show calendar` - Show upcoming 7 days of events
-• `list events month` or `show calendar month` - Show upcoming 30 days of events
+
+• `list events` or `show calendar` - Show upcoming events
+
 • `delete event: [event ID]` - Delete an event
+
+• `update event: [event ID] to [new title] on [new date/time]` - Update event
 
 **Admin Commands** (Admins Only):
 • `admin add: [user_id] [user_name]` - Approve user for calendar access
 • `admin remove: [user_id]` - Revoke calendar access
 • `admin list` - Show all approved users
-• `admin all users` - Show all users in groupme
 
 **Features:**
 ✅ Automatic conflict detection - prevents double-booking
@@ -457,38 +458,19 @@ Type `help` for this message anytime!"""
             logger.error(f"Error in handle_create_event: {e}")
             return f"❌ Error creating event: {str(e)}"
     
-    def handle_list_events(self, showid, nbrDays) -> str:
+    def handle_list_events(self) -> str:
         """Handle list events request."""
         try:
-            events = self.calendar_manager.list_upcoming_events(days=nbrDays)
+            events = self.calendar_manager.list_upcoming_events(days=7)
             
             if not events:
-                return "📅 No upcoming events in the next " +nbrDays+ " days!"
+                return "📅 No upcoming events in the next 7 days!"
             
             response = "📅 **Upcoming Events:**\n"
             for i, event in enumerate(events[:10], 1):
-                #print("EVENT: "+json.dumps(event))
                 title = event.get('summary', 'Untitled')
                 start = event['start'].get('dateTime', event['start'].get('date', 'TBD'))
-                id = event.get('id',"")
-                # response += f"{i}. {title} - {start}\n"
-                # Format the datetime/date string
-                if start != 'TBD':
-                    try:
-                        # Parse ISO format datetime or date
-                        dt = datetime.fromisoformat(start.replace('Z', '+00:00'))
-                        # Format as "MMM DD" and "HH:MM am/pm"
-                        formatted_start = dt.strftime('%b %d at %I:%M %p')
-                    except ValueError:
-                        # If it's a date-only string (YYYY-MM-DD)
-                        dt = datetime.strptime(start, '%Y-%m-%d')
-                        formatted_start = dt.strftime('%b %d')
-                else:
-                    formatted_start = 'TBD'
-                if showid:
-                    response += f"{i}. {title}: {id} - {formatted_start}\n"
-                else:
-                    response += f"{i}. {title} - {formatted_start}\n"
+                response += f"{i}. {title} - {start}\n"
             
             return response
         
@@ -527,33 +509,11 @@ Type `help` for this message anytime!"""
         
         return response
 
-    def handle_admin_allUsers(self) -> str:
-        response = "👥 **All Users:**\n"
-        """Send a message to the GroupMe group."""
-        if not GROUPME_BOT_ID:
-            logger.warning("GROUPME_BOT_ID not configured")
-            return False
-            
-        url = 'https://api.groupme.com/v3/groups/'+GROUPME_GROUP_ID
-        
-        payload = {
-            'token': GROUPME_API_TOKEN
-        }
-        
-        try:
-            response = requests.post(url, json=payload)
-            response.raise_for_status()
-            print(response.text)
-            return True
-        except Exception as e:
-            logger.error(f"Error getting GroupMe users: {e}")
-            return "Error getting GroupMe users"
-
 
 @functions_framework.http
-def calendar_agent(request):
+def calendar_agent(request: Request):
     """
-    Main HTTP Cloud Function that receives GroupMe webhook messages.
+    Main HTTP endpoint for Cloud Run that receives GroupMe webhook messages.
     
     Expected JSON payload from GroupMe:
     {
@@ -568,20 +528,18 @@ def calendar_agent(request):
         
         if not request_json:
             return {"status": "error", "message": "No JSON provided"}, 400
-        print("MSG: " + json.dumps(request_json))
         
         # Extract message details
         text = request_json.get("text", "").strip()
         user_id = request_json.get("user_id", "")
         group_id = request_json.get("group_id", "")
         user_name = request_json.get("name", "User")
-        sender_id = request_json.get("sender_id", "")
         
         if not text or not user_id or not group_id:
             return {"status": "ignored", "message": "Missing required fields"}, 200
         
         # Don't process bot's own messages
-        if user_id == GROUPME_BOT_ID or sender_id == "903762":
+        if user_id == GROUPME_BOT_ID:
             return {"status": "ignored"}, 200
         
         # Initialize handler
@@ -591,27 +549,16 @@ def calendar_agent(request):
         text_lower = text.lower()
         
         # Help command
-        if ('help' in text_lower or 'cal help' in text_lower) and 'Calendar Bot Help' not in text and 'Type `help`' not in text:
+        if 'help' in text_lower or 'cal help' in text_lower:
             response_message = handler.handle_help()
         
         # Create event
         elif 'create event' in text_lower:
             response_message = handler.handle_create_event(user_id, user_name, text)
         
-        # Delete event
-        elif 'delete event:' in text_lower:
-            event_id = text.replace("delete event: ", "", 1).strip()
-            response_message = handler.delete_event(event_id)
-            
         # List events
-        elif 'list events' in text_lower or 'show calendar' in text_lower:
-            showid = False
-            if 'id' in text_lower:
-                showid = True
-            if 'month' in text_lower:
-                response_message = handler.handle_list_events(showid, 30)
-            else:
-                response_message = handler.handle_list_events(showid, 7)
+        elif 'list events' in text_lower or 'show calendar' in text_lower or 'upcoming' in text_lower:
+            response_message = handler.handle_list_events()
         
         # Admin commands
         elif 'admin add:' in text_lower:
@@ -631,10 +578,7 @@ def calendar_agent(request):
         
         elif 'admin list' in text_lower:
             response_message = handler.handle_admin_list()
-
-        elif 'admin all users' in text_lower:
-            response_message = handler.handle_admin_allUsers()
-            
+        
         # Only send response if we matched a command
         if response_message:
             GroupMeManager.send_message(response_message)
