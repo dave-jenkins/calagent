@@ -5,12 +5,15 @@ import os
 from google.cloud.firestore import Client as FirestoreClient
 from datetime import datetime, timedelta
 from typing import Dict, Tuple, Optional
-from flask import Request
-import requests
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from dateutil import parser as dateutil_parser
 import pytz
+from flask import Flask
+from flask import Request
+import requests
+
+app = Flask(__name__)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -552,7 +555,7 @@ Type `help` for this message anytime!"""
             return "Error getting GroupMe users"
 
 
-@functions_framework.http
+@app.route("/")
 def calendar_agent(request: Request):
     """
     Main HTTP Cloud Function that receives GroupMe webhook messages.
@@ -650,3 +653,6 @@ def calendar_agent(request: Request):
         error_msg = f"❌ Error: {str(e)}"
         GroupMeManager.send_message(error_msg)
         return {"status": "error", "message": str(e)}, 500
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
