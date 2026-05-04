@@ -462,7 +462,7 @@ Type `help` for this message anytime!"""
             logger.error(f"Error in handle_create_event: {e}")
             return f"❌ Error creating event: {str(e)}"
 
-    def handle_delete_event(self, eventid) -> str:
+    def handle_delete_event(self, user_id: str, eventid: str) -> str:
         """Handle event creation request."""
         # Check if user is approved
         if not self.auth_manager.is_user_approved(user_id):
@@ -624,7 +624,7 @@ def calendar_agent(request):
         # Delete event
         elif 'delete event:' in text_lower:
             event_id = text.replace("delete event: ", "", 1).strip()
-            response_message = handler.handle_delete_event(event_id)
+            response_message = handler.handle_delete_event(user_id, event_id)
             
         # List events
         elif 'list events' in text_lower or 'show calendar' in text_lower:
