@@ -461,6 +461,24 @@ Type `help` for this message anytime!"""
         except Exception as e:
             logger.error(f"Error in handle_create_event: {e}")
             return f"❌ Error creating event: {str(e)}"
+
+    def handle_delete_event(self, eventid) -> str:
+        """Handle event creation request."""
+        # Check if user is approved
+        if not self.auth_manager.is_user_approved(user_id):
+            return f"❌ **Permission Denied:** {user_name}, you're not approved to delete events. Ask an admin!"
+        
+        try:
+            # delete the event
+            success, response_msg, event = self.calendar_manager.create_event(
+                event_id=eventid
+            )
+            
+            return response_msg
+        
+        except Exception as e:
+            logger.error(f"Error in handle_delete_event: {e}")
+            return f"❌ Error deleting event: {str(e)}"
     
     def handle_list_events(self, showid, nbrDays) -> str:
         """Handle list events request."""
@@ -606,7 +624,7 @@ def calendar_agent(request):
         # Delete event
         elif 'delete event:' in text_lower:
             event_id = text.replace("delete event: ", "", 1).strip()
-            response_message = handler.delete_event(event_id)
+            response_message = handler.handle_delete_event(event_id)
             
         # List events
         elif 'list events' in text_lower or 'show calendar' in text_lower:
