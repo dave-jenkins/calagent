@@ -470,7 +470,7 @@ Type `help` for this message anytime!"""
         
         try:
             # delete the event
-            success, response_msg, event = self.calendar_manager.create_event(
+            success, response_msg, event = self.calendar_manager.delete_event(
                 event_id=eventid
             )
             
