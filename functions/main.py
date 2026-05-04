@@ -470,7 +470,7 @@ Type `help` for this message anytime!"""
         
         try:
             # delete the event
-            response_msg = self.calendar_manager.delete_event(
+            success, response_msg = self.calendar_manager.delete_event(
                 event_id=eventid
             )
             
@@ -491,7 +491,7 @@ Type `help` for this message anytime!"""
             
             response = "📅 **Upcoming Events:**\n"
             for i, event in enumerate(events[:10], 1):
-                #print("EVENT: "+json.dumps(event))
+                print("EVENT: "+json.dumps(event))
                 title = event.get('summary', 'Untitled')
                 start = event['start'].get('dateTime', event['start'].get('date', 'TBD'))
                 id = event.get('id',"")
@@ -627,7 +627,7 @@ def calendar_agent(request):
         elif 'delete event:' in text_lower:
             event_id = text.replace("delete event: ", "", 1).strip()
             response_message = handler.handle_delete_event(user_id, event_id)
-            print("RESP: " + response_message)
+            print(response_message)
             
         # List events
         elif 'list events' in text_lower or 'show calendar' in text_lower:
