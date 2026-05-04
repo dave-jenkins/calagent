@@ -558,14 +558,16 @@ Type `help` for this message anytime!"""
             logger.warning("GROUPME_BOT_ID not configured")
             return False
             
-        url = 'https://api.groupme.com/v3/groups/'+GROUPME_GROUP_ID
+        #url = 'https://api.groupme.com/v3/groups/'+GROUPME_GROUP_ID
+        url = 'https://api.groupme.com/v3/groups/'+GROUPME_GROUP_ID+"?token="+GROUPME_API_TOKEN
         
         payload = {
             'token': GROUPME_API_TOKEN
         }
         
         try:
-            response = requests.post(url, json=payload)
+            #response = requests.post(url, json=payload)
+            response = requests.get(url)
             response.raise_for_status()
             print(response.text)
             return True
