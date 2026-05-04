@@ -571,9 +571,9 @@ Type `help` for this message anytime!"""
             response.raise_for_status()
             respjson = response.json()
             print("USERS: " +json.dumps(respjson))
-            #response = "👥 **Available Users:**\n"
-            #for member in response.members:
-            #    response += f"• {member.get('name', 'Unknown')} ({user.get('user_id', 'N/A')})\n"
+            response = "👥 **Available Users:**\n"
+            for member in respjson.members:
+                response += f"• {member.get('name', 'Unknown')} ({user.get('user_id', 'N/A')})\n"
             return response
         except Exception as e:
             logger.error(f"Error getting GroupMe users: {e}")
