@@ -33,7 +33,6 @@ db = FirestoreClient()
 APPROVED_USERS_COLLECTION = 'calendar_approved_users'
 CONFIG_COLLECTION = 'calendar_config'
 
-
 class CalendarManager:
     """Manages Google Calendar operations with conflict detection."""
     
