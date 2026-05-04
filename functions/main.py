@@ -570,7 +570,7 @@ Type `help` for this message anytime!"""
             response = requests.get(url)
             response.raise_for_status()
             respjson = response.json()
-            print("USERS: " +json.dumps(response))
+            print("USERS: " +json.dumps(respjson))
             #response = "👥 **Available Users:**\n"
             #for member in response.members:
             #    response += f"• {member.get('name', 'Unknown')} ({user.get('user_id', 'N/A')})\n"
