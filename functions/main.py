@@ -569,11 +569,10 @@ Type `help` for this message anytime!"""
             #response = requests.post(url, json=payload)
             response = requests.get(url)
             response.raise_for_status()
-            print(response)
-            print(json.dumps(response))
-            response = "👥 **Available Users:**\n"
-            for member in response.members:
-                response += f"• {member.get('name', 'Unknown')} ({user.get('user_id', 'N/A')})\n"
+            print("USERS: " +response)
+            #response = "👥 **Available Users:**\n"
+            #for member in response.members:
+            #    response += f"• {member.get('name', 'Unknown')} ({user.get('user_id', 'N/A')})\n"
             return response
         except Exception as e:
             logger.error(f"Error getting GroupMe users: {e}")
