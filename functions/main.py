@@ -478,7 +478,7 @@ Type `help` for this message anytime!"""
         
         except Exception as e:
             logger.error(f"Error in handle_delete_event: {e}")
-            return f"❌ Error deleting event: {str(e)}"
+            return f"❌ Error handling delete event: {str(e)}"
     
     def handle_list_events(self, showid, nbrDays) -> str:
         """Handle list events request."""
