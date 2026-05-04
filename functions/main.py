@@ -387,6 +387,7 @@ class CommandHandler:
   Example: `create event: Team Meeting on Friday at 2pm`
 • `list events` or `show calendar` - Show upcoming 7 days of events
 • `list events month` or `show calendar month` - Show upcoming 30 days of events
+  Add `id` to list events to get id included in response, used to then delete or update event
 • `delete event: [event ID]` - Delete an event
 • `update event` - coming soon
 
