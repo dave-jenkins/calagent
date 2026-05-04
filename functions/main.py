@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 # Environment variables
 GROUPME_BOT_ID = os.environ.get('GROUPME_BOT_ID')
 GROUPME_API_TOKEN = os.environ.get('GROUPME_API_TOKEN')
+GROUPME_GROUP_ID = os.environ.get('GROUPME_GROUP_ID')
 GOOGLE_CALENDAR_ID = os.environ.get('GOOGLE_CALENDAR_ID', 'primary')
 PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
 ADMIN_USER_IDS = set(os.environ.get('ADMIN_USER_IDS', '').split(',')) if os.environ.get('ADMIN_USER_IDS') else set()
@@ -388,7 +389,6 @@ class CommandHandler:
 • `list events month` or `show calendar month` - Show upcoming 30 days of events
   Add `id` to list events to get id included in response, used to then delete or update event
 • `delete event: [event ID]` - Delete an event
-• `update event` - coming soon
 
 **Admin Commands** (Admins Only):
 • `admin add: [user_id] [user_name]` - Approve user for calendar access
