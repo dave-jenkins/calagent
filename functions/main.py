@@ -365,7 +365,7 @@ class GroupMeManager:
             response.raise_for_status()
             return True
         except Exception as e:
-            logger.error(f"Error sending GroupMe message: {e}")
+            logger.error(f"Error sending GroupMe message: {message} :: {e}")
             return False
 
 
