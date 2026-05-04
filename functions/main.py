@@ -470,7 +470,7 @@ Type `help` for this message anytime!"""
         
         try:
             # delete the event
-            success, response_msg, event = self.calendar_manager.delete_event(
+            response_msg = self.calendar_manager.delete_event(
                 event_id=eventid
             )
             
@@ -478,7 +478,9 @@ Type `help` for this message anytime!"""
         
         except Exception as e:
             logger.error(f"Error in handle_delete_event: {e}")
+            self.calendar_manager.delete_event(event_id=eventid)
             return f"❌ Error handling delete event: {str(e)}"
+            
     
     def handle_list_events(self, showid, nbrDays) -> str:
         """Handle list events request."""
