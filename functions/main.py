@@ -478,7 +478,6 @@ Type `help` for this message anytime!"""
         
         except Exception as e:
             logger.error(f"Error in handle_delete_event: {e}")
-            self.calendar_manager.delete_event(event_id=eventid)
             return f"❌ Error handling delete event: {str(e)}"
             
     
@@ -628,6 +627,7 @@ def calendar_agent(request):
         elif 'delete event:' in text_lower:
             event_id = text.replace("delete event: ", "", 1).strip()
             response_message = handler.handle_delete_event(user_id, event_id)
+            print("RESP: " + response_message)
             
         # List events
         elif 'list events' in text_lower or 'show calendar' in text_lower:
