@@ -600,12 +600,13 @@ def calendar_agent(request):
         group_id = request_json.get("group_id", "")
         user_name = request_json.get("name", "User")
         sender_id = request_json.get("sender_id", "")
+        sender_type = request_json.get("sender_type", "")
         
         if not text or not user_id or not group_id:
             return {"status": "ignored", "message": "Missing required fields"}, 200
         
         # Don't process bot's own messages
-        if user_id == GROUPME_BOT_ID or sender_id == "903762":
+        if (user_name == "CalendarMgr" and sender_type == "bot") or sender_id == "909774":
             return {"status": "ignored"}, 200
         
         # Initialize handler
