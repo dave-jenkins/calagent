@@ -570,12 +570,11 @@ Type `help` for this message anytime!"""
             response = requests.get(url)
             response.raise_for_status()
             respjson = response.json()
-            #print("USERS: " +json.dumps(respjson))
             response = "👥 **Available Users:**\n"
-            print("USERS-response: " +json.dumps(respjson['response']))
+            #print("USERS-response: " +json.dumps(respjson['response']))
             print("USERS-response-members: " +json.dumps(respjson['response']['members']))
             for member in respjson['response']['members']:
-                response += f"• {member.get('name', 'Unknown')} ({user.get('user_id', 'N/A')})\n"
+                response += f"• {member['name']} ({member['user_id']})\n"
             return response
         except Exception as e:
             logger.error(f"Error getting GroupMe users: {e}")
