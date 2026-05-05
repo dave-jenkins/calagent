@@ -570,9 +570,9 @@ Type `help` for this message anytime!"""
             response = requests.get(url)
             response.raise_for_status()
             respjson = response.json()
-            print("USERS: " +json.dumps(respjson))
+            #print("USERS: " +json.dumps(respjson))
             response = "👥 **Available Users:**\n"
-            for member in respjson.response.members:
+            for member in respjson['response']['members']:
                 response += f"• {member.get('name', 'Unknown')} ({user.get('user_id', 'N/A')})\n"
             return response
         except Exception as e:
