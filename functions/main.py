@@ -383,8 +383,8 @@ class CommandHandler:
         help_text = """📅 **Calendar Bot Help**
 
 **Calendar Commands:**
-• `create event: Event Name on [date] at [time]` - Create an event
-  Example: `create event: Team Meeting on Friday at 2pm`
+• `create event: Event Name on [date] at [time] for [min]` - Create an event
+  Example: `create event: Team Meeting on Friday at 2pm for 90`
 • `list events` or `show calendar` - Show upcoming 7 days of events
 • `list events month` or `show calendar month` - Show upcoming 30 days of events
   Add `id` to list events to get id included in response, used to then delete or update event
@@ -572,7 +572,7 @@ Type `help` for this message anytime!"""
             respjson = response.json()
             response = "👥 **Available Users:**\n"
             #print("USERS-response: " +json.dumps(respjson['response']))
-            print("USERS-response-members: " +json.dumps(respjson['response']['members']))
+            #print("USERS-response-members: " +json.dumps(respjson['response']['members']))
             for member in respjson['response']['members']:
                 response += f"• {member['name']} ({member['user_id']})\n"
             return response
