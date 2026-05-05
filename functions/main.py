@@ -573,7 +573,7 @@ Type `help` for this message anytime!"""
             #print("USERS: " +json.dumps(respjson))
             response = "👥 **Available Users:**\n"
             print("USERS-response: " +json.dumps(respjson['response']))
-            print("USERS-response-members: " +json.dumps(respjson['response]'['members']))
+            print("USERS-response-members: " +json.dumps(respjson['response']['members']))
             for member in respjson['response']['members']:
                 response += f"• {member.get('name', 'Unknown')} ({user.get('user_id', 'N/A')})\n"
             return response
