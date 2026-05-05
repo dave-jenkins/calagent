@@ -490,7 +490,7 @@ Type `help` for this message anytime!"""
                 return "📅 No upcoming events in the next " +nbrDays+ " days!"
             
             response = "📅 **Upcoming Events:**\n"
-            for i, event in enumerate(events[:10], 1):
+            for i, event in enumerate(events, 1):
                 print("EVENT: "+json.dumps(event))
                 title = event.get('summary', 'Untitled')
                 start = event['start'].get('dateTime', event['start'].get('date', 'TBD'))
