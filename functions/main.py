@@ -398,7 +398,7 @@ class CommandHandler:
 Type `help` for this message anytime!"""
         return help_text.strip()
 
-        def handle_admin_help(self) -> str:
+    def handle_admin_help(self) -> str:
         """Display help message for calendar commands."""
         #• `update event: [event ID] to [new title] on [new date/time]` - Update event
         help_text = """📅 **Calendar Bot Help**
