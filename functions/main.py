@@ -395,13 +395,13 @@ class CommandHandler:
 ✅ Suggests alternate times when conflicts found
 ✅ Natural language dates: "tomorrow", "next friday", "May 15th at 3:30pm"
 
-Type `help` for this message anytime!"""
+Type `help` for this message or 'admin help' for admin message anytime!"""
         return help_text.strip()
 
     def handle_admin_help(self) -> str:
         """Display help message for calendar commands."""
         #• `update event: [event ID] to [new title] on [new date/time]` - Update event
-        help_text = """📅 **Calendar Bot Help**
+        help_text = """📅 **Calendar Bot Admin Help**
 
 **Admin Commands** (Admins Only):
 • `admin add: [user_id] [user_name]` - Approve user for calendar access
