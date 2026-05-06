@@ -390,23 +390,28 @@ class CommandHandler:
   Add `id` to list events to get id included in response, used to then delete or update event
 • `delete event: [event ID]` - Delete an event
 
+**Features:**
+✅ Automatic conflict detection - prevents double-booking
+✅ Suggests alternate times when conflicts found
+✅ Natural language dates: "tomorrow", "next friday", "May 15th at 3:30pm"
+
+Type `help` for this message anytime!"""
+        return help_text.strip()
+
+        def handle_admin_help(self) -> str:
+        """Display help message for calendar commands."""
+        #• `update event: [event ID] to [new title] on [new date/time]` - Update event
+        help_text = """📅 **Calendar Bot Help**
+
 **Admin Commands** (Admins Only):
 • `admin add: [user_id] [user_name]` - Approve user for calendar access
 • `admin remove: [user_id]` - Revoke calendar access
 • `admin list` - Show all approved users
 • `admin all users` - Show all users in groupme
 
-**Features:**
-✅ Automatic conflict detection - prevents double-booking
-✅ Suggests alternate times when conflicts found
-✅ User approval system - only approved users can modify events
-✅ Admin management - separate tier for access control
-✅ Natural language dates: "tomorrow", "next friday", "May 15th at 3:30pm"
-✅ Timezone: America/New_York
-
-Type `help` for this message anytime!"""
+Type `admin help` for this message anytime!"""
         return help_text.strip()
-    
+
     def handle_create_event(self, user_id: str, user_name: str, message: str) -> str:
         """Handle event creation request."""
         # Check if user is approved
@@ -622,8 +627,12 @@ def calendar_agent(request):
         
         text_lower = text.lower()
         
+        # Admin Help command
+        if ('admin help' in text_lower) and 'Calendar Bot Help' not in text and 'Type `help`' not in text:
+            response_message = handler.handle_admin_help()
+
         # Help command
-        if ('help' in text_lower or 'cal help' in text_lower) and 'Calendar Bot Help' not in text and 'Type `help`' not in text:
+        elif ('help' in text_lower or 'cal help' in text_lower) and 'Calendar Bot Help' not in text and 'Type `help`' not in text:
             response_message = handler.handle_help()
         
         # Create event
