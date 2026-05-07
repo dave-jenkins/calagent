@@ -520,7 +520,7 @@ Type `admin help` for this message anytime!"""
         try:
             if month == nomonth:
                 events = self.calendar_manager.list_upcoming_events(days=nbrDays)
-            else
+            else:
                 events = self.calendar_manager.list_upcoming_events_for(month_short_name=month)
             
             if not events:
