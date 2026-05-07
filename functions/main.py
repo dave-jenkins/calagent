@@ -252,7 +252,7 @@ class CalendarManager:
             if month_nbr < cur_month:
                 target_year += 1
             from_date = datetime(target_year, month_nbr, 1)
-            to_date = now + timedelta(months=1)
+            to_date = from_date + timedelta(months=1)
             
             events_result = self.service.events().list(
                 calendarId=GOOGLE_CALENDAR_ID,

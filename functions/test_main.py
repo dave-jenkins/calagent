@@ -31,9 +31,36 @@ def load_main_module():
     apiclient_module = types.ModuleType("googleapiclient")
     discovery_module = types.ModuleType("googleapiclient.discovery")
     functions_framework_module = types.ModuleType("functions_framework")
+    dateutil_module = types.ModuleType("dateutil")
+    dateutil_parser_module = types.ModuleType("dateutil.parser")
+    pytz_module = types.ModuleType("pytz")
+    flask_module = types.ModuleType("flask")
+    requests_module = types.ModuleType("requests")
 
     firestore_module.Client = lambda *args, **kwargs: fake_db
     discovery_module.build = lambda *args, **kwargs: MagicMock()
+    dateutil_parser_module.parse = lambda *args, **kwargs: MagicMock(tzinfo=True)
+    dateutil_parser_module.isoparse = lambda value: value
+    dateutil_module.parser = dateutil_parser_module
+    pytz_module.timezone = lambda *_args, **_kwargs: MagicMock(localize=lambda dt: dt)
+
+    class FakeFlask:
+        def __init__(self, *_args, **_kwargs):
+            pass
+
+        def route(self, *_args, **_kwargs):
+            def decorator(func):
+                return func
+
+            return decorator
+
+        def run(self, *_args, **_kwargs):
+            return None
+
+    flask_module.Flask = FakeFlask
+    flask_module.request = MagicMock()
+    requests_module.post = MagicMock()
+    requests_module.get = MagicMock()
     oauth2_module.service_account = service_account_module
     cloud_module.firestore = firestore_module
     google_module.cloud = cloud_module
@@ -42,6 +69,11 @@ def load_main_module():
 
     module_stubs = {
         "functions_framework": functions_framework_module,
+        "dateutil": dateutil_module,
+        "dateutil.parser": dateutil_parser_module,
+        "pytz": pytz_module,
+        "flask": flask_module,
+        "requests": requests_module,
         "google": google_module,
         "google.cloud": cloud_module,
         "google.cloud.firestore": firestore_module,
