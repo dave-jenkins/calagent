@@ -239,7 +239,32 @@ class CalendarManager:
             error_msg = f"❌ Error updating event: {str(e)}"
             logger.error(error_msg)
             return False, error_msg, None
-    
+
+    def list_upcoming_events_for(self, month_short_name) -> list:
+        """List upcoming events for the named month."""
+        try:
+            cur_month = datetime.now().month
+            month_nbr = datetime.strptime(month_short_name, "%b").month
+            target_year = datetime.now().year
+            if month_nbr < cur_month:
+                target_year += 1
+            from_date = datetime(target_year, month_nbr, 1)
+            to_date = now + timedelta(months=1)
+            
+            events_result = self.service.events().list(
+                calendarId=GOOGLE_CALENDAR_ID,
+                timeMin=from_date.isoformat(),
+                timeMax=to_date.isoformat(),
+                singleEvents=True,
+                orderBy='startTime'
+            ).execute()
+            
+            return events_result.get('items', [])
+        
+        except Exception as e:
+            logger.error(f"Error listing events: {e}")
+            return []
+            
     def list_upcoming_events(self, days: int = 7) -> list:
         """List upcoming events for the next N days."""
         try:
@@ -385,8 +410,9 @@ class CommandHandler:
 **Calendar Commands:**
 • `create event: Event Name on [date] at [time] for [min]` - Create an event
   Example: `create event: Team Meeting on Friday at 2pm for 90`
-• `list events` or `show calendar` - Show upcoming 7 days of events
-• `list events month` or `show calendar month` - Show upcoming 30 days of events
+• `list events` - Show upcoming 7 days of events
+• `list events month` - Show upcoming 30 days of events
+• `list events for Jun` - Show Jun events (Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sept, Oct, Nov, Dec)
   Add `id` to list events to get id included in response, used to then delete or update event
 • `delete event: [event ID]` - Delete an event
 
@@ -486,13 +512,16 @@ Type `admin help` for this message anytime!"""
             return f"❌ Error handling delete event: {str(e)}"
             
     
-    def handle_list_events(self, showid, nbrDays) -> str:
+    def handle_list_events(self, showid, month, nbrDays) -> str:
         """Handle list events request."""
         try:
-            events = self.calendar_manager.list_upcoming_events(days=nbrDays)
+            if month == "none"
+                events = self.calendar_manager.list_upcoming_events(days=nbrDays)
+            else
+                events = self.calendar_manager.list_upcoming_events_for(month_short_name=month)
             
             if not events:
-                return "📅 No upcoming events in the next " +nbrDays+ " days!"
+                return "📅 No upcoming events in request time-frame!"
             
             response = "📅 **Upcoming Events:**\n"
             for i, event in enumerate(events, 1):
@@ -646,14 +675,20 @@ def calendar_agent(request):
             print(response_message)
             
         # List events
-        elif 'list events' in text_lower or 'show calendar' in text_lower:
+        elif 'list events' in text_lower:
             showid = False
             if 'id' in text_lower:
                 showid = True
-            if 'month' in text_lower:
-                response_message = handler.handle_list_events(showid, 30)
+            if 'list events for' in text_lower:
+                parts = text.split('list events for', 1)[1].strip().split()
+                target_month = "none"
+                if len(parts) >= 1:
+                    target_month = parts[0]
+                response_message = handler.handle_list_events(showid, target_month, 30, 
+            elif 'month' in text_lower:
+                response_message = handler.handle_list_events(showid, target_month, 30)
             else:
-                response_message = handler.handle_list_events(showid, 7)
+                response_message = handler.handle_list_events(showid, target_month, 7)
         
         # Admin commands
         elif 'admin add:' in text_lower:
