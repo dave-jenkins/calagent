@@ -15,6 +15,9 @@ import requests
 
 app = Flask(__name__)
 
+# Configure constants
+nomonth = "none"
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -515,7 +518,7 @@ Type `admin help` for this message anytime!"""
     def handle_list_events(self, showid, month, nbrDays) -> str:
         """Handle list events request."""
         try:
-            if month == "none"
+            if month == nomonth:
                 events = self.calendar_manager.list_upcoming_events(days=nbrDays)
             else
                 events = self.calendar_manager.list_upcoming_events_for(month_short_name=month)
@@ -681,7 +684,7 @@ def calendar_agent(request):
                 showid = True
             if 'list events for' in text_lower:
                 parts = text.split('list events for', 1)[1].strip().split()
-                target_month = "none"
+                target_month = nomonth
                 if len(parts) >= 1:
                     target_month = parts[0]
                 response_message = handler.handle_list_events(showid, target_month, 30, 
