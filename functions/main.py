@@ -687,7 +687,7 @@ def calendar_agent(request):
                 target_month = nomonth
                 if len(parts) >= 1:
                     target_month = parts[0]
-                response_message = handler.handle_list_events(showid, target_month, 30, 
+                response_message = handler.handle_list_events(showid, target_month, 30) 
             elif 'month' in text_lower:
                 response_message = handler.handle_list_events(showid, target_month, 30)
             else:
