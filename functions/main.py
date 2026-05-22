@@ -681,11 +681,11 @@ def calendar_agent(request):
         # List events
         elif 'list events' in text_lower:
             showid = False
+            target_month = nomonth
             if 'id' in text_lower:
                 showid = True
             if 'list events for' in text_lower:
                 parts = text.split('list events for', 1)[1].strip().split()
-                target_month = nomonth
                 if len(parts) >= 1:
                     target_month = parts[0]
                 response_message = handler.handle_list_events(showid, target_month, 30) 
